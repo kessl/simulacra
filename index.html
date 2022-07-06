@@ -5,14 +5,26 @@
     <title>sim</title>
   </head>
   <body>
+    <pre id="dump"></pre>
+    <button id="tick">next tick</button>
     <script type="module">
-      import init, { add } from './pkg/without_a_bundler.js'
+      import init, { Universe } from './pkg/simulacra.js'
       async function run() {
-        await init()
-        const result = add(1, 2)
-        console.log(`1 + 2 = ${result}`)
-        if (result !== 3)
-          throw new Error("wasm addition doesn't work!")
+        const module = await init()
+        const universe = Universe.new()
+
+        const button = document.getElementById('tick')
+        button.addEventListener('click', function() {
+          universe.tick()
+        })
+
+        const pre = document.getElementById('dump')
+        function render() {
+          const cells = new Uint32Array(module.memory.buffer, universe.cells_ptr(), universe.cells_count());
+          pre.innerHTML = cells
+          window.requestAnimationFrame(render)
+        }
+        render()
       }
       run()
     </script>

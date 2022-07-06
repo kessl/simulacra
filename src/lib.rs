@@ -1,24 +1,36 @@
 use wasm_bindgen::prelude::*;
 
-// Called when the wasm module is instantiated
 #[wasm_bindgen(start)]
 pub fn main() -> Result<(), JsValue> {
-    // Use `web_sys`'s global `window` function to get a handle on the global
-    // window object.
-    let window = web_sys::window().expect("no global `window` exists");
-    let document = window.document().expect("should have a document on window");
-    let body = document.body().expect("document should have a body");
-
-    // Manufacture the element we're gonna append
-    let val = document.create_element("p")?;
-    val.set_inner_html("Hello from Rust!");
-
-    body.append_child(&val)?;
-
     Ok(())
 }
 
 #[wasm_bindgen]
-pub fn add(a: u32, b: u32) -> u32 {
-    a + b
+pub struct Universe {
+  tick: u32,
+  cells: Vec<u32>,
+}
+
+#[wasm_bindgen]
+impl Universe {
+  pub fn new() -> Universe {
+    Self {
+      tick: 0,
+      cells: vec![],
+    }
+  }
+
+  pub fn tick(&mut self) {
+    let mut cells = vec![0; 10].into_iter().enumerate().map(|(i, _)| self.tick + i as u32).collect();
+    self.cells.append(&mut cells);
+    self.tick += 10;
+  }
+
+  pub fn cells_ptr(&self) -> *const u32 {
+    self.cells.as_ptr()
+  }
+
+  pub fn cells_count(&self) -> u32 {
+    self.cells.len() as u32
+  }
 }
