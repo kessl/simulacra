@@ -8,23 +8,11 @@
     <pre id="dump"></pre>
     <button id="tick">next tick</button>
     <script type="module">
-      import init, { Universe } from './pkg/simulacra.js'
+      import init from './pkg/simulacra.js'
       async function run() {
-        const module = await init()
-        const universe = Universe.new()
-
-        const button = document.getElementById('tick')
-        button.addEventListener('click', function() {
-          universe.tick()
-        })
-
-        const pre = document.getElementById('dump')
-        function render() {
-          const cells = new Uint32Array(module.memory.buffer, universe.cells_ptr(), universe.cells_count());
-          pre.innerHTML = cells
-          window.requestAnimationFrame(render)
-        }
-        render()
+        const wasm = await init()
+        const module = await import('./index.js')
+        await module.default(wasm)
       }
       run()
     </script>
