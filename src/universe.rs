@@ -6,18 +6,16 @@ use crate::terrain::{generate_terrain, Tile};
 pub struct Universe {
   tick: usize,
   tiles: Vec<Tile>,
-  width: usize,
-  height: usize,
+  size: usize,
 }
 
 #[wasm_bindgen]
 impl Universe {
-  pub fn new(width: usize, height: usize) -> Universe {
+  pub fn new(size: usize) -> Universe {
     Self {
       tick: 0,
-      tiles: generate_terrain(width, height),
-      width,
-      height,
+      tiles: generate_terrain(size),
+      size,
     }
   }
 
@@ -29,11 +27,7 @@ impl Universe {
     self.tiles.as_ptr()
   }
 
-  pub fn width(&self) -> usize {
-    self.width
-  }
-
-  pub fn height(&self) -> usize {
-    self.height
+  pub fn size(&self) -> usize {
+    self.size
   }
 }

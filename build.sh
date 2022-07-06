@@ -2,5 +2,5 @@
 
 set -ex
 
-wasm-pack build --target web
+wasm-pack build --debug --target web
 python3 -m http.server

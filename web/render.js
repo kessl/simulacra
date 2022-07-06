@@ -1,24 +1,23 @@
 import { Tile } from '../pkg/simulacra.js'
 
-const CELL_SIZE = 5 // px
+const CELL_SIZE = 2 // px
 const COLORS = {
   [Tile.Air]: '#fff',
   [Tile.Water]: '#00f',
   [Tile.Rock]: '#000',
 }
 
-function initCtx(width, height) {
+function initCtx(size) {
   const canvas = document.getElementsByTagName('canvas')[0]
-  canvas.width = width * CELL_SIZE
-  canvas.height = height * CELL_SIZE
+  canvas.width = canvas.height = size * CELL_SIZE
   return canvas.getContext('2d')
 }
 
-function drawTiles(ctx, width, height, tiles) {
+function drawTiles(ctx, size, tiles) {
   ctx.beginPath()
-  for (let row = 0; row < height; row++) {
-    for (let col = 0; col < width; col++) {
-      const index = row * width + col
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      const index = row * size + col
       ctx.fillStyle = COLORS[tiles[index]]
       ctx.fillRect(
         col * CELL_SIZE,
@@ -32,13 +31,13 @@ function drawTiles(ctx, width, height, tiles) {
 }
 
 export function hookRender(universe, wasm) {
-  const width = universe.width()
-  const height = universe.height()
-  const ctx = initCtx(width, height)
+  const size = universe.size()
+  const ctx = initCtx(size)
 
   function renderSingleFrame() {
-    const tiles = new Uint8Array(wasm.memory.buffer, universe.tiles_ptr(), width * height)
-    drawTiles(ctx, width, height, tiles)
+    ctx.clearRect(0, 0, size * CELL_SIZE, size * CELL_SIZE)
+    const tiles = new Uint8Array(wasm.memory.buffer, universe.tiles_ptr(), size * size)
+    drawTiles(ctx, size, tiles)
   }
 
   function render() {
