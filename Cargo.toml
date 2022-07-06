@@ -1,7 +1,10 @@
 [package]
 name = "simulacra"
+description = "Pixel art evolution simulator"
+repository = "https://github.com/kessl/simulacra"
 version = "0.1.0"
 authors = ["daniel <dan@kessl.net>"]
+license = "MIT"
 edition = "2021"
 
 [lib]

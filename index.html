@@ -18,7 +18,7 @@
       import init from './pkg/simulacra.js'
       async function run() {
         const wasm = await init()
-        const module = await import('./index.js')
+        const module = await import('./web/index.js')
         await module.default(wasm)
       }
       run()
