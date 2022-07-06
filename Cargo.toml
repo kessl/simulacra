@@ -1,0 +1,21 @@
+[package]
+name = "simulacra"
+version = "0.1.0"
+authors = ["daniel <dan@kessl.net>"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2.81"
+
+[dependencies.web-sys]
+version = "0.3.58"
+features = [
+  'Document',
+  'Element',
+  'HtmlElement',
+  'Node',
+  'Window',
+]
