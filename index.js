@@ -1,17 +1,12 @@
 import { Universe } from './pkg/simulacra.js'
+import { hookRender } from './render.js'
 
-const universe = Universe.new()
-const pre = document.getElementById('dump')
+const universe = Universe.new(100, 100)
 const button = document.getElementById('tick')
 button.addEventListener('click', function() {
   universe.tick()
 })
 
-export default async function(module) {
-  function render() {
-    const cells = new Uint32Array(module.memory.buffer, universe.cells_ptr(), universe.cells_count());
-    pre.innerHTML = cells
-    window.requestAnimationFrame(render)
-  }
-  render()
+export default async function(wasm) {
+  hookRender(universe, wasm)
 }

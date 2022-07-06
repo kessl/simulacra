@@ -7,30 +7,38 @@ pub fn main() -> Result<(), JsValue> {
 
 #[wasm_bindgen]
 pub struct Universe {
-  tick: u32,
-  cells: Vec<u32>,
+  tick: usize,
+  cells: Vec<usize>,
+  width: usize,
+  height: usize,
 }
 
 #[wasm_bindgen]
 impl Universe {
-  pub fn new() -> Universe {
+  pub fn new(width: usize, height: usize) -> Universe {
     Self {
       tick: 0,
-      cells: vec![],
+      cells: Vec::with_capacity(width * height),
+      width,
+      height,
     }
   }
 
   pub fn tick(&mut self) {
-    let mut cells = vec![0; 10].into_iter().enumerate().map(|(i, _)| self.tick + i as u32).collect();
+    let mut cells = vec![0; 10].into_iter().enumerate().map(|(i, _)| self.tick + i).collect();
     self.cells.append(&mut cells);
     self.tick += 10;
   }
 
-  pub fn cells_ptr(&self) -> *const u32 {
+  pub fn cells_ptr(&self) -> *const usize {
     self.cells.as_ptr()
   }
 
-  pub fn cells_count(&self) -> u32 {
-    self.cells.len() as u32
+  pub fn width(&self) -> usize {
+    self.width
+  }
+
+  pub fn height(&self) -> usize {
+    self.height
   }
 }
