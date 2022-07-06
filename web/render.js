@@ -1,39 +1,28 @@
+import { Tile } from '../pkg/simulacra.js'
+
 const CELL_SIZE = 5 // px
-const GRID_COLOR = '#ddd'
+const COLORS = {
+  [Tile.Air]: '#fff',
+  [Tile.Water]: '#00f',
+  [Tile.Rock]: '#000',
+}
 
 function initCtx(width, height) {
   const canvas = document.getElementsByTagName('canvas')[0]
-  canvas.width = width * (CELL_SIZE + 1) + 1
-  canvas.height = height * (CELL_SIZE + 1) + 1
+  canvas.width = width * CELL_SIZE
+  canvas.height = height * CELL_SIZE
   return canvas.getContext('2d')
 }
 
-function drawGrid(ctx, width, height) {
-  ctx.beginPath()
-  ctx.strokeStyle = GRID_COLOR
-
-  for (let i = 0; i <= width; i++) {
-    ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0)
-    ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1)
-  }
-
-  for (let j = 0; j <= height; j++) {
-    ctx.moveTo(0, j * (CELL_SIZE + 1) + 1)
-    ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1)
-  }
-
-  ctx.stroke()
-}
-
-function drawCells(ctx, width, height, cells) {
+function drawTiles(ctx, width, height, tiles) {
   ctx.beginPath()
   for (let row = 0; row < height; row++) {
     for (let col = 0; col < width; col++) {
       const index = row * width + col
-      ctx.fillStyle = cells[index] % 7 ? '#fff' : '#000'
+      ctx.fillStyle = COLORS[tiles[index]]
       ctx.fillRect(
-        col * (CELL_SIZE + 1) + 1,
-        row * (CELL_SIZE + 1) + 1,
+        col * CELL_SIZE,
+        row * CELL_SIZE,
         CELL_SIZE,
         CELL_SIZE
       )
@@ -48,9 +37,8 @@ export function hookRender(universe, wasm) {
   const ctx = initCtx(width, height)
 
   function renderSingleFrame() {
-    const cells = new Uint32Array(wasm.memory.buffer, universe.cells_ptr(), width * height)
-    drawGrid(ctx, width, height)
-    drawCells(ctx, width, height, cells)
+    const tiles = new Uint8Array(wasm.memory.buffer, universe.tiles_ptr(), width * height)
+    drawTiles(ctx, width, height, tiles)
   }
 
   function render() {
